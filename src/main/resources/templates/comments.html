@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comentários - My CodeBlog</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <style>
+        .btn-light {
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            padding: 5px 15px;
+            transition: background-color 0.3s;
+        }
+
+        .btn-light:hover {
+            background-color: #f0f0f0; /* Cor ao passar o mouse */
+            border-color: #aaa; /* Cor da borda ao passar o mouse */
+        }
+    </style>
+</head>
+<body>
+<header>
+    <nav class="navbar navbar-light bg-light">
+        <span class="navbar-brand mb-0 h1" style="font-weight: bold">MyCodeBlog</span>
+        <a href="/posts" class="btn btn-primary ml-auto" style="border-radius: 20px;">Voltar aos Posts</a>
+    </nav>
+</header>
+
+<main>
+    <div class="container" style="width: 60%; padding-bottom: 30px;">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb" style="background-color: white; padding-left: 0px;">
+                <li class="breadcrumb-item"><a href="/posts">Posts</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Comentários</li>
+            </ol>
+        </nav>
+
+        <h2 class="mb-4">Comentários para o Post: <span th:text="${post.titulo}"></span></h2>
+
+        <!-- Exibindo a mídia do post -->
+        <div>
+            <div th:if="${post.mediaPath.endsWith('.jpg') || post.mediaPath.endsWith('.png')}">
+                <img th:src="@{/uploads/{filename}(filename=${post.mediaPath})}" alt="Imagem" style="max-width: 100%; height: auto;">
+            </div>
+            <div th:if="${post.mediaPath.endsWith('.mp4')}">
+                <video controls style="max-width: 100%; height: auto;">
+                    <source th:src="@{/uploads/{filename}(filename=${post.mediaPath})}" type="video/mp4">
+                    Seu navegador não suporta o elemento de vídeo.
+                </video>
+            </div>
+        </div>
+
+        <div class="alert alert-danger alert-dismissible" role="alert" th:if="${not #strings.isEmpty(mensagem)}">
+            <span th:text="${mensagem}"></span>
+        </div>
+
+        <div class="mb-4">
+            <h4>Comentários:</h4>
+            <div th:each="comment : ${comments}">
+                <div class="card mb-2">
+                    <div class="card-body">
+                        <h6 class="card-subtitle mb-2 text-muted" th:text="${comment.autor}"></h6>
+                        <p class="card-text" th:utext="${comment.texto}"></p>
+                        <p><strong>Likes:</strong> <span th:text="${comment.likes}"></span></p>
+
+                        <!-- Botão de Like -->
+                        <form th:action="@{/posts/{postId}/comments/{commentId}/like(postId=${post.id}, commentId=${comment.id})}" method="post">
+                            <button type="submit" class="btn btn-light">
+                                <i class="fas fa-thumbs-up" style="margin-right: 5px;"></i>
+                                Curtir
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div th:if="${#lists.isEmpty(comments)}">
+                <p>Não há comentários para este post ainda.</p>
+            </div>
+        </div>
+
+        <h4>Adicionar Comentário:</h4>
+        <form method="post" action="/comments/add" enctype="multipart/form-data">
+            <input type="hidden" name="postId" th:value="${post.id}"/>
+            <div class="form-group">
+                <input type="text" class="form-control" name="autor" placeholder="Seu Nome *" required>
+            </div>
+            <div class="form-group">
+                <textarea class="form-control" name="texto" placeholder="Seu Comentário *" rows="3" required></textarea>
+            </div>
+
+            <!-- Campo para upload de mídia -->
+            <div class="form-group">
+                <label for="media">Inserir Imagem ou Vídeo:</label>
+                <input type="file" class="form-control-file" id="media" name="file" accept="image/*,video/*">
+            </div>
+
+
+            <button type="submit" class="btn btn-primary">Adicionar Comentário</button>
+        </form>
+    </div>
+</main>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "TB_POST")
@@ -25,6 +27,22 @@ public class Post {
     @NotBlank
     @Lob
     private String texto;
+
+    @NotBlank
+    @Column(name = "media_path", length = 1000, columnDefinition = "varchar(1000) default ''")
+    private String mediaPath;
+
+    // Construtor padrão (sem parâmetros)
+    public Post() {
+    }
+
+    public Post(Long id) {
+        this.id = id;
+    }
+
+    // Relação com comentários
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comentarios = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -64,5 +82,21 @@ public class Post {
 
     public void setTexto(String texto) {
         this.texto = texto;
+    }
+
+    public String getMediaPath() {
+        return mediaPath;
+    }
+
+    public void setMediaPath(String mediaPath) {
+        this.mediaPath = mediaPath;
+    }
+
+    public List<Comment> getComentarios() {
+        return comentarios;
+    }
+
+    public void setComentarios(List<Comment> comentarios) {
+        this.comentarios = comentarios;
     }
 }

@@ -1,51 +1,50 @@
 <!DOCTYPE html>
 <html xmlns:th="http://thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My CodeBlog</title>
-
+    <title>MyCodeBlog</title>
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
     <!-- Bootstrap CSS -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
-    <!-- jQuery (versão completa) -->
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-
-    <!-- Popper.js e Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js"></script>
-
-    <!-- Summernote CSS e JS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote-bs4.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote-bs4.js"></script>
 </head>
 <body>
+
 <header>
     <nav class="navbar navbar-light bg-light">
-        <span class="navbar-brand mb-0 h1" style="font-weight: bold">MyCodeBlog</span>
+        <span class="navbar-brand mb-0 h1" style="font-weight: bold;">MyCodeBlog</span>
     </nav>
 </header>
 
 <section>
-    <div class="container" style="width: 60%; padding-bottom: 30px;">
+    <div class="container" style="width: 70%;">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb" style="background-color: white; padding-left: 0px;">
-                <li class="breadcrumb-item" aria-current="page"><a href="/posts">Posts</a></li>
+                <li class="breadcrumb-item"><a href="/posts">Posts</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Novo Post</li>
             </ol>
         </nav>
-
         <div>
             <th:block th:include="mensagemValidacao"></th:block>
-            <form method="post">
+            <form method="post" th:action="@{/newpost}" th:object="${post}" enctype="multipart/form-data">
                 <div class="form-group">
-                    <input type="text" class="form-control" name="titulo" placeholder="titulo *">
+                    <input type="text" class="form-control" th:field="*{titulo}" placeholder="Título *" required>
                 </div>
                 <div class="form-group">
-                    <input type="text" class="form-control" name="autor" placeholder="autor *">
+                    <input type="text" class="form-control" th:field="*{autor}" placeholder="Autor *" required>
                 </div>
 
-                <textarea id="summernote" type="text" class="form-control" name="texto" placeholder="texto *"></textarea>
+                <textarea id="summernote" class="form-control" th:field="*{texto}" placeholder="Texto *" required></textarea>
+
+                <div class="form-group">
+                    <label for="fileUpload">Adicionar Imagem ou Vídeo</label>
+                    <input type="file" class="form-control-file" th:field="*{mediaPath}" id="fileUpload" accept="image/*,video/*">
+                </div>
 
                 <small class="form-text text-muted">(*) Campos obrigatórios</small>
 
@@ -56,7 +55,6 @@
     </div>
 </section>
 
-<!-- Script para inicializar o Summernote -->
 <script>
     $(document).ready(function() {
         $('#summernote').summernote({
@@ -66,5 +64,6 @@
         });
     });
 </script>
+
 </body>
 </html>
